@@ -1,0 +1,51 @@
+
+/*.list-group {*/
+    /*height: 90%;*/
+    /*overflow-y: SCROLL;*/
+/*}*/
+
+#myCanvas{
+    height: 530px;
+    width:900px;
+
+}
+.container-full{
+    padding-top: 25px;
+}
+
+.list-group {
+
+    max-height: 70vh;
+    overflow-y: scroll;
+}
+
+.list-group-item.repeated{
+    background: #eee;
+}
+ .navbar-default .navbar-nav > li > a {
+    color: #FFF;
+}
+
+.navbar-default .navbar-brand,.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
+    color: #FBDA54;
+    background-color: transparent;
+}
+
+.navbar-default {
+    background-color: #428BCA;
+    border-color: #FFFFFF;
+}
+
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+    color: #FFF289;
+    background-color: transparent;
+}
+
+.panel{
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.pb{
+    padding-bottom: 25px;
+}

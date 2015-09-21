@@ -1,0 +1,95 @@
+﻿
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CAD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/main.css">
+
+</head>
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed"
+                    data-toggle="collapse"
+                    data-target="#navbar-menu"
+                    aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">
+                    CAD
+                </a>
+            </div>
+
+
+            <div class="collapse navbar-collapse" id="navbar-menu">
+                <ul class="nav navbar-nav">
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle"
+                           data-toggle="dropdown" role="button"
+                           aria-haspopup="true" aria-expanded="false">
+                            Algoritmos
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a id="metodo_directo_btn" href="#">
+                                    Metodo Directo
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a id="metodo_add_simple_btn" href="#">
+                                    Metodo Add Simple
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a id="metodo_add_entero_btn" href="#">
+                                    Metodo Add Entero
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a id="lapiz" href="#">
+                                    Lapiz
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a id="limpiar" href="#">
+                                    Limpiar
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="container">
+        <article class="col-sm-8">
+            <canvas id="myCanvas"  style="border:1px solid #000000;">
+            </canvas>
+        <article>
+    </section>
+
+
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+
+
+</html>
