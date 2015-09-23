@@ -7,6 +7,8 @@ $(function(){
     var metodo_directo_btn = document.getElementById("metodo_directo_btn");
     var metodo_add_simple_btn = document.getElementById("metodo_add_simple_btn");
     var metodo_add_entero_btn = document.getElementById("metodo_add_entero_btn");
+    var metodo_implicito_circulo_btn = document.getElementById("metodo_implicito_circulo_btn");
+    var metodo_incremental_circulo_btn = document.getElementById("metodo_incremental_circulo_btn");
     var limpiar = document.getElementById("limpiar");
 
     $(limpiar).click(function(){
@@ -45,6 +47,24 @@ $(function(){
         var xi=null , yi = null, xf =null, xf= null;
         $(c).css("cursor","crosshair");
         $(c).mousedown(metodo_add_entero_click);
+
+    });
+
+    $(metodo_implicito_circulo_btn).click(function(){
+        reset_function();
+        var xi=null , yi = null, xf =null, xf= null;
+        $(c).css("cursor","crosshair");
+        $(c).mousedown(circulo_init_xy);
+        $(c).mouseup(metodo_implicito_circulo_mouseup);
+
+    });
+
+    $(metodo_incremental_circulo_btn).click(function(){
+        reset_function();
+        var xi=null , yi = null, xf =null, xf= null;
+        $(c).css("cursor","crosshair");
+        $(c).mousedown(circulo_init_xy);
+        $(c).mouseup(metodo_incremental_circulo_mouseup);
 
     });
 
@@ -133,6 +153,7 @@ $(function(){
             }
         }
     }
+
     function metodo_add_entero(xi,yi,xf,yf){
         if(xi==xf) return linea_vertical(xi,yi,xf,yf);
 
@@ -226,6 +247,50 @@ $(function(){
             return;
         }
     }
+
+    function metodo_implicito_circulo(xi,yi,xf,yf){
+
+        var radio = Math.floor(Math.sqrt(Math.pow(xf-xi,2)+Math.pow(yf-yi,2)));
+        var radio2 = Math.pow(radio,2);
+
+
+        for(x=xi-radio ; x<=xi+radio ; x++){
+            raiz= Math.sqrt(radio2 - Math.pow(x-xi,2));
+            y= yi + raiz;
+            y2= yi - raiz;
+            dibujar(x,y);
+            dibujar(x,y2);
+        }
+    }
+
+    function metodo_incremental_circulo(xi,yi,xf,yf){
+
+        var radio = Math.floor(Math.sqrt(Math.pow(xf-xi,2)+Math.pow(yf-yi,2)));
+
+        var dx = 1 /radio;
+        var sa = Math.sin(dx);
+        var ca = Math.cos(dx);
+        var x = 0;
+        var y = radio;
+
+        while(y>= x){
+            dibujar(xi+x,yi+y);
+            dibujar(xi-x,yi+y);
+            dibujar(xi+x,yi-y);
+            dibujar(xi-x,yi-y);
+            dibujar(xi+y,yi+x);
+            dibujar(xi-y,yi+x);
+            dibujar(xi+y,yi-x);
+            dibujar(xi-y,yi-x);
+
+            aux = x;
+            x = (x*ca) - (y* sa);
+            y = (y*ca) + (aux * sa);
+        }
+
+
+    }
+
 
     function linea_horizontal(xi,yi,xf,yf){
         if(xi>xf){
@@ -345,6 +410,26 @@ $(function(){
         ultima_posicion_click=null;
 
     };
+
+    function metodo_implicito_circulo_mouseup(e){
+        var coord = convertir_click(e);
+        xf = coord.x;
+        yf = coord.y;
+        metodo_implicito_circulo(xi,yi,xf,yf);
+    }
+
+    function metodo_incremental_circulo_mouseup(e){
+        var coord = convertir_click(e);
+        xf = coord.x;
+        yf = coord.y;
+        metodo_incremental_circulo(xi,yi,xf,yf);
+    }
+
+    function circulo_init_xy(e){
+        var coord = convertir_click(e);
+        xi=coord.x;
+        yi=coord.y;
+    }
 
     function reset_function(e){
 
