@@ -1,20 +1,32 @@
-$(function(){
-
     var click_apretado = false;
     var ultima_posicion_click = null;
 
-    var c = document.getElementById("myCanvas");
+    var canvas = document.getElementById("myCanvas");
     var metodo_directo_btn = document.getElementById("metodo_directo_btn");
     var metodo_add_simple_btn = document.getElementById("metodo_add_simple_btn");
     var metodo_add_entero_btn = document.getElementById("metodo_add_entero_btn");
     var metodo_implicito_circulo_btn = document.getElementById("metodo_implicito_circulo_btn");
+    var metodo_coordenadas_polares_btn = document.getElementById("metodo_coordenadas_polares_btn");
     var metodo_incremental_circulo_btn = document.getElementById("metodo_incremental_circulo_btn");
     var limpiar = document.getElementById("limpiar");
+    var dibujar_area_recorte_btn = document.getElementById("dibujar_area_recorte_btn");
+    var area_recorte ={};
+    var figuras = [];
+    var context = canvas.getContext("2d");
+    context.fillStyle = "darkblue";
+    context.strokeStyle = "darkblue";
+
+$(function(){
+
+
 
     $(limpiar).click(function(){
-        c.width= c.offsetWidth;
+
+        canvas.width= canvas.offsetWidth;
         reset_function();
     })
+
+
 
     $(lapiz).click(function(){
         ultima_posicion_click = null;
@@ -26,231 +38,86 @@ $(function(){
         $(c).mousemove(mover_mouse);
     });
 
-    $(metodo_directo_btn).click(function(){
-        reset_function();
-        var xi=null , yi = null, xf =null, xf= null;
-        $(c).css("cursor","crosshair");
-        $(c).mousedown(metodo_directo_click);
+    // $(metodo_directo_btn).click(function(){
+    //     reset_function();
+    //     var xi=null , yi = null, xf =null, yf= null;
+    //     $(c).css("cursor","crosshair");
+    //     $(c).mousedown(metodo_directo_click);
 
-    });
+    // });
 
-    $(metodo_add_simple_btn).click(function(){
-        reset_function();
-        var xi=null , yi = null, xf =null, xf= null;
-        $(c).css("cursor","crosshair");
-        $(c).mousedown(metodo_add_simple_click);
+    // $(metodo_add_simple_btn).click(function(){
+    //     reset_function();
+    //     var xi=null , yi = null, xf =null, yf= null;
+    //     $(c).css("cursor","crosshair");
+    //     $(c).mousedown(metodo_add_simple_click);
 
-    });
+    // });
 
-    $(metodo_add_entero_btn).click(function(){
-        reset_function();
-        var xi=null , yi = null, xf =null, xf= null;
-        $(c).css("cursor","crosshair");
-        $(c).mousedown(metodo_add_entero_click);
+    // $(metodo_add_entero_btn).click(function(){
+    //     reset_function();
+    //     var xi=null , yi = null, xf =null, yf= null;
+    //     $(c).css("cursor","crosshair");
+    //     $(c).mousedown(metodo_add_entero_click);
 
-    });
+    // });
 
     $(metodo_implicito_circulo_btn).click(function(){
         reset_function();
-        var xi=null , yi = null, xf =null, xf= null;
+        var xi=null , yi = null, xf =null, yf= null;
         $(c).css("cursor","crosshair");
-        $(c).mousedown(circulo_init_xy);
+        $(c).mousedown(init_xy);
         $(c).mouseup(metodo_implicito_circulo_mouseup);
+
+    });
+
+    $(metodo_coordenadas_polares_btn).click(function(){
+        reset_function();
+        var xi=null , yi = null, xf =null, yf= null;
+        $(c).css("cursor","crosshair");
+        $(c).mousedown(init_xy);
+        $(c).mouseup(metodo_coordenadas_polares_mouseup);
 
     });
 
     $(metodo_incremental_circulo_btn).click(function(){
         reset_function();
-        var xi=null , yi = null, xf =null, xf= null;
+        var xi=null , yi = null, xf =null, yf= null;
         $(c).css("cursor","crosshair");
-        $(c).mousedown(circulo_init_xy);
+        $(c).mousedown(init_xy);
         $(c).mouseup(metodo_incremental_circulo_mouseup);
+
+    });
+
+    $(dibujar_area_recorte_btn).click(function(){
+        reset_function();
+        var xi=null , yi = null, xf =null, yf= null;
+        $(c).css("cursor","crosshair");
+        $(c).mousedown(init_xy);
+        $(c).mouseup(dibujar_area_recorte_mouseup);
 
     });
 
 
     //establecer el ancho y largo del canvas del DOM con el de CSS
-    c.width = c.offsetWidth;
-    c.height = c.offsetHeight;
-
-    var pincel = c.getContext("2d");
-    pincel.fillStyle = "darkblue";
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
 
 
-    function metodo_directo(xi,yi,xf,yf){
-        if(xi== xf) return linea_vertical(xi,yi,xf,yf);
-        if(yi==yf) return linea_horizontal(xi,yi,xf,yf);
-        var  m = (yf-yi)/(xf-xi);
-        if(Math.abs(m) == 1) return linea_diagonal(xi,yi,xf);
-        if( (Math.abs(m) < 1  && xi > xf )|| (Math.abs(m) > 1 && yf< yi)){
-            var aux=xi;
-            xi=xf;
-            xf=aux;
 
-            aux=yi;
-            yi=yf;
-            yf=aux;
-        }
 
-        var b = yi - (m*xi);
-        var p = 0; //nuevo punto a hallar
 
-        if(Math.abs(m) < 1){
-            for(xi;xi<=xf;xi++){
-                p= (m*xi)+b;
-                dibujar(xi,Math.round(p));
-            }
-            return;
-        }
+});
 
-        for( yi;yi<=yf;yi++){
-            p=(yi-b)/m;
-            dibujar(Math.round(p),yi);
-        }
-    }
 
-    function metodo_add_simple(xi,yi,xf,yf){
-        if(xi== xf) return linea_vertical(xi,yi,xf,yf);
-        if(yi==yf) return linea_horizontal(xi,yi,xf,yf)
 
-        var  m = (yf-yi)/(xf-xi)
-        if(Math.abs(m) == 1) return linea_diagonal(xi,yi,xf)
-        else{
-            //intercambio de valores
-            if(Math.abs(m)<1 && xi > xf){
-                var aux = xi;
-                xi= xf;
-                xf=aux;
 
-                aux=yi;
-                yi=yf;
-                yf=aux;
-            }
-            if(Math.abs(m)> 1 && yi > yf){
-                var aux = yi;
-                yi=yf;
-                yf=aux;
 
-                aux=xi;
-                xi=xf;
-                xf=aux;
-            }
 
-            if(Math.abs(m) < 1){
-                var yc = yi;
-                for(xi;xi<xf;xi++){
-                    yc=yc+m;
-                    dibujar(xi,Math.round(yc));
-                }
-                return dibujar(xf,yf);
-            }
-
-            var im= 1/m;
-            var xc = xi;
-            for(yi;yi<yf;yi++){
-                    xc=xc+im;
-                    dibujar(Math.round(xc),yi);
-            }
-        }
-    }
-
-    function metodo_add_entero(xi,yi,xf,yf){
-        if(xi==xf) return linea_vertical(xi,yi,xf,yf);
-
-        if(yi==yf) return linea_horizontal(xi,yi,xf,yf);
-
-        var m = (yf-yi)/(xf-xi);
-        if (Math.abs(m) == 1) return linea_diagonal(xi,yi,xf);
-        if( yi>yf ){
-            var aux = xi;
-            xi=xf;
-            xf=aux;
-            aux=yi;
-            yi=yf;
-            yf=aux;
-        }
-
-        var caso = 0;
-        var deltax = xf - xi;
-        var deltay = yf - yi;
-        var error = 0;
-
-        if(m >0 && m<1) caso=1;
-        else if (m>1) caso=2;
-        else if(m>-1 && m<0) caso=3;
-        else if(m < -1) caso=4;
-        dibujar(xi,yi);
-        if(caso==1){
-            console.log("caso1")
-            for(xi; xi<=xf;++xi){
-
-                if(error<0){
-                    dibujar(xi,yi);
-                    error=error+deltay
-                }
-                else{
-                    dibujar(xi,yi+1);
-                    error = error + (deltay - deltax);
-                    yi = yi+1;
-                }
-            }
-            return;
-        }
-        if(caso==2){
-
-            for(i=yi+1;i<=yf;i++){
-                if(error<0){
-                    dibujar(xi+1,i);
-                    error = error + (deltay - deltax);
-                    xi= xi +1;
-                }
-                else{
-                    dibujar(xi,i);
-                    error = error - deltax;
-                }
-            }
-            return;
-        }
-
-        if(caso==3){
-            console.log("caso3")
-            while(xi > xf){
-
-                xi=xi-1;
-                if(error < 0){
-                    dibujar(xi,yi);
-                    error = error + deltay;
-                }
-                else{
-
-                    yi=yi+1;
-                    dibujar(xi,yi)
-                    error = error + (deltax + deltay);
-                }
-            }
-            return;
-        }
-
-        if(caso==4){
-            console.log("caso4")
-            for(yi; yi<=yf; yi++){
-                if(error<0){
-                    dibujar(xi-1,yi);
-                    error = error + (deltay + deltax);
-                    xi = xi - 1;
-                }
-                else{
-                    dibujar(xi,yi);
-                    error = error +deltax;
-                }
-            }
-            return;
-        }
-    }
 
     function metodo_implicito_circulo(xi,yi,xf,yf){
 
-        var radio = Math.floor(Math.sqrt(Math.pow(xf-xi,2)+Math.pow(yf-yi,2)));
+        var radio = Math.sqrt(Math.pow(xf-xi,2)+Math.pow(yf-yi,2));
         var radio2 = Math.pow(radio,2);
 
 
@@ -263,9 +130,21 @@ $(function(){
         }
     }
 
-    function metodo_incremental_circulo(xi,yi,xf,yf){
+    function metodo_coordenadas_polares(xi,yi,xf,yf){
+        var radio = Math.sqrt(Math.pow(xf-xi,2)+Math.pow(yf-yi,2));
+        var radian = (Math.PI*2)/360;
+        var a = 0;
+        while(a <=2*Math.PI){
+            x = xi + radio * Math.cos(a);
+            y = yi + radio* Math.sin(a);
+            dibujar(x,y);
+            a = a + radian;
+        }
+    }
 
-        var radio = Math.floor(Math.sqrt(Math.pow(xf-xi,2)+Math.pow(yf-yi,2)));
+    function metodo_incremental_circulo(xi,yi,xf,yf){// parametrica polar
+
+        var radio = Math.sqrt(Math.pow(xf-xi,2)+Math.pow(yf-yi,2));
 
         var dx = 1 /radio;
         var sa = Math.sin(dx);
@@ -292,39 +171,7 @@ $(function(){
     }
 
 
-    function linea_horizontal(xi,yi,xf,yf){
-        if(xi>xf){
-            var aux = xf;
-            xf=xi;
-            xi=aux;
-        }
-        for(xi;xi<=xf;xi++){
-            dibujar(xi,yi);
-        }
-    }
 
-    function linea_vertical(xi,yi,xf,yf){
-        if(yi>yf){
-            var aux = yf;
-            yf=yi;
-            yi=aux;
-        }
-        for(yi;yi<=yf;yi++){
-            dibujar(xi,yi);
-        }
-    }
-
-    function linea_diagonal(xi,yi,xf){
-
-        for (xi;xi<=xf;xi++){
-            dibujar(xi,yi);
-            yi++;
-        }
-    }
-
-    function dibujar(x,y){
-        pincel.fillRect(x,y,1,1);
-    }
 
     function convertir_click(e){
         var x;
@@ -355,14 +202,15 @@ $(function(){
         y = clickedPosition.y;
 
         if(!window.started){
-            pincel.beginPath();
-            pincel.moveTo(x,y);
+            context.beginPath();
+            context.moveTo(x,y);
             window.started = true;
 
         }
         else{
-            pincel.lineTo(x,y);
-            pincel.stroke();
+            context.strokeStyle = "darkblue";
+            context.lineTo(x,y);
+            context.stroke();
         }
     }
 
@@ -391,7 +239,7 @@ $(function(){
         }
         xf=coord.x;
         yf= coord.y;
-        metodo_add_simple(xi,yi,xf,yf);
+        metodo_add_simple();
         ultima_posicion_click=null;
 
     };
@@ -418,6 +266,13 @@ $(function(){
         metodo_implicito_circulo(xi,yi,xf,yf);
     }
 
+    function metodo_coordenadas_polares_mouseup(e){
+        var coord = convertir_click(e);
+        xf = coord.x;
+        yf = coord.y;
+        metodo_coordenadas_polares(xi,yi,xf,yf);
+    }
+
     function metodo_incremental_circulo_mouseup(e){
         var coord = convertir_click(e);
         xf = coord.x;
@@ -425,18 +280,28 @@ $(function(){
         metodo_incremental_circulo(xi,yi,xf,yf);
     }
 
-    function circulo_init_xy(e){
+    function dibujar_area_recorte_mouseup(e){
+        var coord = convertir_click(e);
+        xf = coord.x;
+        yf = coord.y;
+        dibujar_area_recorte(xi,yi,xf,yf);
+    }
+
+    function init_xy(e){
         var coord = convertir_click(e);
         xi=coord.x;
         yi=coord.y;
     }
 
-    function reset_function(e){
-
-        ultima_posicion_click = null;
-        $(c).unbind();
-        $(c).css("cursor","auto");
+function dibujar(x,y){
+        context.fillStyle = "darkblue";
+        context.fillRect(x,y,1,1);
     }
 
+function reset_function(e){
 
-})
+    ultima_posicion_click = null;
+    // area_recorte = {};
+    $(c).unbind();
+    $(c).css("cursor","auto");
+}
