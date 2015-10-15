@@ -32,14 +32,14 @@ function dibujar_area_recorte(xi,yi,xf,yf){
 }
 
 
-
-//recorta una linea respecto a un area definida
+//recorta una linea respecto a un area definida  COHEN-SUDHERLAND
 function recortar_linea(xi,yi,xf,yf){
     //Se guardan los puntos en un array para mayor encapsulamiento
-    console.log(area_recorte)
+    console.log("CORTEE");
     var inicio = [xi,yi];
     var fin = [xf,yf];
     console.log("inicio: "+inicio);
+    console.log("final: "+inicio);
     var puntos = [];
 
     puntos.push(inicio);
@@ -52,6 +52,98 @@ function recortar_linea(xi,yi,xf,yf){
 
     //si ambos puntos estan dentro del area
     if(binario_inicio == '0000' && binario_fin == '0000')
+        console.log('TRIVIAL');//es un caso trivial y no se realiza corte
+
+    //cuanto ambos puntos estan fuera del area pero comparten un bit
+    else if((parseInt(binario_inicio,2) & parseInt(binario_fin,2)) != 0 )
+    {
+
+        console.log('TRIVIAL');
+        //se borra toda la linea
+        xi = xf+1;
+        yi = yf+1;
+
+    }
+
+    //un punto esta dentro del area pero otro esta fuera ( 0000 * XXXX siempre da 0)
+    else if( (binario_inicio & binario_fin) == 0 && binario_inicio == '0000' || binario_fin == '0000')
+    {
+        //si el primer punto esta dentro del area, se halla la interseccion respecto al punto final
+        if(binario_inicio=='0000') var intersecciones = encontrar_interseccion(binario_fin, puntos);
+        //si el  punto final esta dentro del area, se halla la interseccion respecto al primer punto
+        else var intersecciones = encontrar_interseccion(binario_inicio, puntos);
+
+
+        console.log("Las intersecciones son : " + intersecciones[0]);
+
+        var cant = intersecciones.length -1;//puede que hayan sido 1 o 2 intersecciones
+
+        //si el punto inicial estaba afuera
+        if(binario_inicio != '0000')
+        {
+            //la interseccion se vuelve el nuevo punto inicial
+            xi = intersecciones[cant][0];
+            yi = intersecciones[cant][1];
+        }
+        //si el punto final estaba afuera
+        else if(binario_fin != '0000')
+        {
+            //la interseccion se vuelve el nuevo punto final
+            xf = intersecciones[cant][0];
+            yf = intersecciones[cant][1];
+
+        }
+    }
+
+    // cuando los dos puntos estan afuera pero no comparten ningun bit ( no hay interseccion)
+    else if( (parseInt(binario_inicio,2) & parseInt(binario_fin,2)) == 0)
+    {
+        //se halla la interseccion del primer punto
+        intersecciones = encontrar_interseccion(binario_inicio, puntos);
+        console.log("intersecciones de punto inicio : " + intersecciones[0]);
+
+        var cant = intersecciones.length -1;//cantidad de intersecciones
+        //la interseccion de vuelve el nuevo punto inicial
+        xi = intersecciones[cant][0];
+        yi = intersecciones[cant][1];
+
+        //se halla la interseccion del punto final
+        intersecciones = encontrar_interseccion(binario_fin, puntos);
+        console.log("intersecciones de punto final : " + intersecciones[0]);
+        var cant = intersecciones.length -1;//cantidad de intersecciones
+
+        //la interseccion de vuelve el nuevo punto final
+        xf = intersecciones[cant][0];
+        yf = intersecciones[cant][1];
+    }
+    var nuevos_puntos ={xi: xi, yi:yi,xf:xf,yf:yf};
+    return nuevos_puntos;
+}
+
+
+//recorta una linea respecto a un area definida
+function recortar_linea_poligono(xi,yi,xf,yf){
+    //Se guardan los puntos en un array para mayor encapsulamiento
+    console.log("CORTEE");
+    var inicio = [xi,yi];
+    var fin = [xf,yf];
+    console.log("inicio: "+inicio);
+    console.log("final: "+inicio);
+    var puntos = [];
+
+    puntos.push(inicio);
+    puntos.push(fin);
+
+    //se hallan los codigos en binario de los puntos segun su ubicacion
+    binario_inicio = binario(inicio);
+    binario_fin = binario(fin);
+
+
+    //si ambos puntos estan dentro del area
+    if(binario_inicio == '0000' && binario_fin == '0000')
+        console.log('TRIVIAL');//es un caso trivial y no se realiza corte
+
+    if(binario_inicio == binario_fin )
         console.log('TRIVIAL');//es un caso trivial y no se realiza corte
 
     //cuanto ambos puntos estan fuera del area pero comparten un bit

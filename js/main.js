@@ -10,6 +10,7 @@
     var metodo_incremental_circulo_btn = document.getElementById("metodo_incremental_circulo_btn");
     var limpiar = document.getElementById("limpiar");
     var dibujar_area_recorte_btn = document.getElementById("dibujar_area_recorte_btn");
+    var dibujar_poligono_btn = document.getElementById("dibujar_poligono_btn");
     var area_recorte ={};
     var figuras = [];
     var context = canvas.getContext("2d");
@@ -18,7 +19,9 @@
 
 $(function(){
 
-
+    $(this).bind("contextmenu", function(e) {
+        e.preventDefault();
+    });
 
     $(limpiar).click(function(){
 

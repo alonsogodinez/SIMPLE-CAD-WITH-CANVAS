@@ -22,6 +22,13 @@ $(metodo_add_entero_btn).click(function(){
 
 });
 
+$(dibujar_poligono_btn).click(function(){
+    var poligono = new Poligono();
+    poligono.metodo = 'add_entero';
+    $(c).mousedown(poligono.mousedown);
+
+});
+
 
 function continuar_trazo(ultima_instancia){
     var clase = ultima_instancia.constructor;
@@ -35,6 +42,7 @@ function continuar_trazo(ultima_instancia){
 function reset_function(e){
 
     ultima_posicion_click = null;
+    $(c).css("cursor","auto");
     // area_recorte = {};
     $(c).unbind();
 }

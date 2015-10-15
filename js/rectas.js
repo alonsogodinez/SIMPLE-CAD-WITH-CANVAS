@@ -179,32 +179,32 @@ function metodo_directo(xi,yi,xf,yf){
 
 
 
-    function linea_horizontal(xi,yi,xf,yf){
-        if(xi>xf){
-            var aux = xf;
-            xf=xi;
-            xi=aux;
-        }
-        for(xi;xi<=xf;xi++){
-            dibujar(xi,yi);
-        }
-    }
+    // function linea_horizontal(xi,yi,xf,yf){
+    //     if(xi>xf){
+    //         var aux = xf;
+    //         xf=xi;
+    //         xi=aux;
+    //     }
+    //     for(xi;xi<=xf;xi++){
+    //         dibujar(xi,yi);
+    //     }
+    // }
 
-    function linea_vertical(xi,yi,xf,yf){
-        if(yi>yf){
-            var aux = yf;
-            yf=yi;
-            yi=aux;
-        }
-        for(yi;yi<=yf;yi++){
-            dibujar(xi,yi);
-        }
-    }
+    // function linea_vertical(xi,yi,xf,yf){
+    //     if(yi>yf){
+    //         var aux = yf;
+    //         yf=yi;
+    //         yi=aux;
+    //     }
+    //     for(yi;yi<=yf;yi++){
+    //         dibujar(xi,yi);
+    //     }
+    // }
 
-    function linea_diagonal(xi,yi,xf){
+    // function linea_diagonal(xi,yi,xf){
 
-        for (xi;xi<=xf;xi++){
-            dibujar(xi,yi);
-            yi++;
-        }
-    }
+    //     for (xi;xi<=xf;xi++){
+    //         dibujar(xi,yi);
+    //         yi++;
+    //     }
+    // }

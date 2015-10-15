@@ -13,6 +13,8 @@ function Linea(xi,yi,xf,yf,metodo){
 
 
     self.mousedown = function (e){
+        if( e.which >='2' ) return reset_function();
+
         var coord = convertir_click(e);
         if(self.xi == null){
             self.xi=coord.x;
@@ -39,6 +41,85 @@ function Linea(xi,yi,xf,yf,metodo){
 }
 
 
+
+function Poligono(metodo){
+
+    var self = this;
+    self.puntos = [];
+    self.punto_referencia = null;
+    self.metodo = null;
+
+
+    $(c).css("cursor","crosshair");
+
+
+    self.mousedown = function (e){
+        var coord = convertir_click(e);
+        var punto =[];
+        if(e.which >='2') {
+            punto[0] =self.puntos[0][0];
+            punto[1] =self.puntos[0][1];
+            self.puntos.push(punto);
+            self.punto_referencia=2;
+            self.draw();
+            self.save();
+            return reset_function();
+        }
+        punto[0]=coord.x;
+        punto[1]= coord.y;
+        self.puntos.push(punto);
+    };
+
+    self.draw = function(){
+        dibujar_poligono(self.puntos,self.metodo);
+
+    }
+
+    self.save= function(){
+        figuras.push(self);
+        reset_function();
+    }
+
+}
+
+
+function dibujar_poligono (puntos,metodo){
+    var puntos_corte = [];
+
+    if(area_recorte.xi){
+        var nuevos_puntos = recortar_linea(puntos[0][0],puntos[0][1],puntos[1][0],puntos[1][1]);
+        if(!(nuevos_puntos.xi==nuevos_puntos.xf && nuevos_puntos.yi == nuevos_puntos.yf)){
+            puntos_corte.push([nuevos_puntos.xi,nuevos_puntos.yi]);
+            puntos_corte.push([nuevos_puntos.xf,nuevos_puntos.yf]);
+        }
+        for(var i =1; i<puntos.length-1;i++){
+            var nuevos_puntos = recortar_linea(puntos[i][0],puntos[i][1],puntos[i+1][0],puntos[i+1][1]);
+            if(!(nuevos_puntos.xi==nuevos_puntos.xf && nuevos_puntos.yi == nuevos_puntos.yf)){
+                puntos_corte.push([nuevos_puntos.xf,nuevos_puntos.yf]);
+            }
+
+        }
+        puntos = puntos_corte;
+    }
+
+    for(var i =0; i<puntos.length-1;i++){
+
+        // if(area_recorte.xi){
+        //     var nuevos_puntos =recortar_linea(puntos[i][0],puntos[i][1],puntos[i+1][0],puntos[i+1][1]);
+        //     puntos[i] =[nuevos_puntos.xi,nuevos_puntos.yi]
+        //     puntos[i+1] =[nuevos_puntos.xf,nuevos_puntos.yf]
+
+        // }
+        var inicio = puntos[i];
+        var fin = puntos[i+1];
+        console.log(i);
+        linea = new Linea(inicio[0],inicio[1],fin[0],fin[1]);
+        linea.metodo = metodo;
+        linea.draw();
+    }
+
+}
+
 var metodos_linea = {
 
     directo : function(xi,yi,xf,yf){
@@ -52,8 +133,8 @@ var metodos_linea = {
         }
 
 
-        if(xi== xf) return linea_vertical(xi,yi,xf,yf);
-        if(yi==yf) return linea_horizontal(xi,yi,xf,yf);
+        if(xi== xf) return this.linea_vertical(xi,yi,xf,yf);
+        if(yi==yf) return this.linea_horizontal(xi,yi,xf,yf);
         var  m = (yf-yi)/(xf-xi);
         if(Math.abs(m) == 1) return linea_diagonal(xi,yi,xf);
         if( (Math.abs(m) < 1  && xi > xf )|| (Math.abs(m) > 1 && yf< yi)){
@@ -98,12 +179,12 @@ var metodos_linea = {
 
         console.log("xi: "+xi+" yi: "+yi+" xf: "+xf+" yf:"+yf);
 
-        if(xi== xf) return linea_vertical(xi,yi,xf,yf);
-        if(yi==yf) return linea_horizontal(xi,yi,xf,yf)
+        if(xi== xf) return this.linea_vertical(xi,yi,xf,yf);
+        if(yi==yf) return this.linea_horizontal(xi,yi,xf,yf)
 
         var  m = (yf-yi)/(xf-xi)
 
-        if(Math.abs(m) == 1) return linea_diagonal(xi,yi,xf)
+        if(Math.abs(m) == 1) return this.linea_diagonal(xi,yi,xf)
         else{
             //intercambio de valores
             if(Math.abs(m)<1 && xi > xf){
@@ -153,12 +234,12 @@ var metodos_linea = {
         }
 
 
-        if(xi==xf) return linea_vertical(xi,yi,xf,yf);
+        if(xi==xf) return this.linea_vertical(xi,yi,xf,yf);
 
-        if(yi==yf) return linea_horizontal(xi,yi,xf,yf);
+        if(yi==yf) return this.linea_horizontal(xi,yi,xf,yf);
 
         var m = (yf-yi)/(xf-xi);
-        if (Math.abs(m) == 1) return linea_diagonal(xi,yi,xf);
+        if (Math.abs(m) == 1) return this.linea_diagonal(xi,yi,xf);
         if( yi>yf ){
             var aux = xi;
             xi=xf;
