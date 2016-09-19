@@ -124,11 +124,11 @@ function recortar_linea(xi,yi,xf,yf){
 //recorta una linea respecto a un area definida
 function recortar_linea_poligono(xi,yi,xf,yf){
     //Se guardan los puntos en un array para mayor encapsulamiento
-    console.log("CORTEE");
+    console.log("corte");
     var inicio = [xi,yi];
     var fin = [xf,yf];
     console.log("inicio: "+inicio);
-    console.log("final: "+inicio);
+    console.log("final: "+fin);
     var puntos = [];
 
     puntos.push(inicio);
@@ -138,22 +138,49 @@ function recortar_linea_poligono(xi,yi,xf,yf){
     binario_inicio = binario(inicio);
     binario_fin = binario(fin);
 
-
     //si ambos puntos estan dentro del area
     if(binario_inicio == '0000' && binario_fin == '0000')
-        console.log('TRIVIAL');//es un caso trivial y no se realiza corte
+        console.log('TRIVIAL');
+        //es un caso trivial y no se realiza corte
 
-    if(binario_inicio == binario_fin )
-        console.log('TRIVIAL');//es un caso trivial y no se realiza corte
+    if(binario_inicio == binario_fin && binario_inicio!='0000'){
+         console.log('TRIVIAL 2');
+        xi = -1;
+        yi = -1;//es un caso trivial y se elimina la linea
+    }
+
 
     //cuanto ambos puntos estan fuera del area pero comparten un bit
     else if((parseInt(binario_inicio,2) & parseInt(binario_fin,2)) != 0 )
     {
-
-        console.log('TRIVIAL');
-        //se borra toda la linea
-        xi = xf+1;
-        yi = yf+1;
+        //si es  una linea de esquina a esquina
+        if(binario_inicio.split(1).length-1== 2 && binario_fin.split(1).length-1== 2){
+            console.log('caso 1 costado  al costado');
+            var interseccion = encontrar_interseccion_fuera(binario_inicio,inicio);
+            xi = interseccion[0];
+            yi = interseccion[1];
+            interseccion = encontrar_interseccion_fuera(binario_fin,fin);
+            xf = interseccion[0];
+            yf = interseccion[1];
+        }
+        //si uno de los dos es
+        else if(binario_inicio.split(1).length-1==1){
+            console.log('caso 2 alcostado noma');
+            var interseccion = encontrar_interseccion_fuera(binario_fin,fin);
+            console.log(interseccion)
+            xi = interseccion[0];
+            yi = interseccion[1]
+            xf = xi;
+            yf = yi;
+        }
+        else{
+            console.log('caso 3 ')
+            var interseccion = encontrar_interseccion_fuera(binario_inicio,inicio);
+            xi = interseccion[0];
+            yi = interseccion[1]
+            xf = xi;
+            yf = yi;
+        }
 
     }
 
@@ -355,4 +382,57 @@ function encontrar_interseccion(codigo, puntos)
     }
 
     return intersecciones;
+}
+
+
+
+function encontrar_interseccion_fuera(codigo, punto)
+{
+
+
+
+    //se obtienes los vlaores maximos y minimos del area generada
+    xmax = area_recorte.xf;
+    xmin = area_recorte.xi;
+
+    ymax = area_recorte.yf;
+    ymin = area_recorte.yi;
+
+
+    //se divide en sus respectivas coordenadas
+    var x = punto[0];
+    var y = punto[1];
+
+
+
+
+    //array para guardar la interseccion
+    var interseccion = []
+
+
+
+    if(codigo.charAt(0) == '1')
+    {
+
+        interseccion[1]= ymax;
+    }
+
+    if(codigo.charAt(1) == '1')
+    {
+        interseccion[1] = ymin;
+    }
+
+    if(codigo.charAt(2) == '1')
+    {
+
+        interseccion[0] = xmax;
+    }
+
+    if(codigo.charAt(3) == '1')
+    {
+        interseccion[0] = xmin;//la coordena X de la interseccion es xmmin
+    }
+
+
+    return interseccion;
 }

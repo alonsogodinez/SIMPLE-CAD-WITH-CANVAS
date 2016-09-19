@@ -13,15 +13,16 @@
     var dibujar_poligono_btn = document.getElementById("dibujar_poligono_btn");
     var area_recorte ={};
     var figuras = [];
-    var context = canvas.getContext("2d");
+    context = canvas.getContext("2d");
     context.fillStyle = "darkblue";
     context.strokeStyle = "darkblue";
 
+
 $(function(){
 
-    $(this).bind("contextmenu", function(e) {
-        e.preventDefault();
-    });
+    // $(this).bind("contextmenu", function(e) {
+    //     e.preventDefault();
+    // });
 
     $(limpiar).click(function(){
 
@@ -41,29 +42,6 @@ $(function(){
         $(c).mousemove(mover_mouse);
     });
 
-    // $(metodo_directo_btn).click(function(){
-    //     reset_function();
-    //     var xi=null , yi = null, xf =null, yf= null;
-    //     $(c).css("cursor","crosshair");
-    //     $(c).mousedown(metodo_directo_click);
-
-    // });
-
-    // $(metodo_add_simple_btn).click(function(){
-    //     reset_function();
-    //     var xi=null , yi = null, xf =null, yf= null;
-    //     $(c).css("cursor","crosshair");
-    //     $(c).mousedown(metodo_add_simple_click);
-
-    // });
-
-    // $(metodo_add_entero_btn).click(function(){
-    //     reset_function();
-    //     var xi=null , yi = null, xf =null, yf= null;
-    //     $(c).css("cursor","crosshair");
-    //     $(c).mousedown(metodo_add_entero_click);
-
-    // });
 
     $(metodo_implicito_circulo_btn).click(function(){
         reset_function();
@@ -297,7 +275,6 @@ $(function(){
     }
 
 function dibujar(x,y){
-        context.fillStyle = "darkblue";
         context.fillRect(x,y,1,1);
     }
 

@@ -4,11 +4,61 @@
     /*overflow-y: SCROLL;*/
 /*}*/
 
-#myCanvas{
+
+.canvas,#myCanvas{
     height: 530px;
     width:900px;
+    display: inline-block;
 
 }
+.transformacion-div{
+    float: left;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.well{
+    background-color: #FAFFE0;
+    text-align: initial;
+}
+
+label{
+    margin-right: 10px;
+}
+
+input{
+    margin-right: 5px;
+}
+
+#control-figuras{
+    border: 1px solid #111;
+    margin-left: 25px;
+    position: absolute;
+    min-width: 320px;
+    display: inline-block;
+    text-align: center;
+    max-height: 530px;
+    overflow-y: scroll;
+        margin-right: 10px;
+/*    padding-bottom: 10px;*/
+}
+
+.figura-seleccion{
+    padding:10px;
+    margin:0;
+    border-bottom:1px solid black;
+}
+.figura-seleccion.selected{
+    background: #D5FFCE;
+}
+.figura-seleccion>div>.btn:first-child{
+    /*margin-right: 6px;*/
+}
+
+.figura-seleccion:last-child{
+    border-bottom: 0;
+}
+
 .container-full{
     padding-top: 25px;
 }

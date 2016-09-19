@@ -1,5 +1,7 @@
 function Linea(xi,yi,xf,yf,metodo){
-
+    context.fillStyle = "black";
+    context.strokeStyle = "black";
+    reset_function();
     var self = this;
     self.xi = xi;
     self.yi = yi;
@@ -27,18 +29,20 @@ function Linea(xi,yi,xf,yf,metodo){
         self.save();
     };
 
-    self.draw = function(){
-        metodos_linea[self.metodo](self.xi,self.yi,self.xf,self.yf);
+    self.draw = function(color){
+        metodos_linea[self.metodo](self.xi,self.yi,self.xf,self.yf,color);
 
     }
 
     self.save= function(){
-        figuras.push(self);
+        console.log("save");
+        guardar_figura(self);
         reset_function();
-        continuar_trazo(self);
+        // continuar_trazo(self.constructor,self.metodo);
     }
 
 }
+
 
 
 
@@ -49,6 +53,7 @@ function Poligono(metodo){
     self.punto_referencia = null;
     self.metodo = null;
 
+    reset_function();
 
     $(c).css("cursor","crosshair");
 
@@ -60,8 +65,9 @@ function Poligono(metodo){
             punto[0] =self.puntos[0][0];
             punto[1] =self.puntos[0][1];
             self.puntos.push(punto);
-            self.punto_referencia=2;
-            self.draw();
+            // self.punto_referencia=2;
+            //guarda puntos si es que hubo algun corte;(reconsiderarlo)
+            self.puntos= self.draw();
             self.save();
             return reset_function();
         }
@@ -70,60 +76,74 @@ function Poligono(metodo){
         self.puntos.push(punto);
     };
 
-    self.draw = function(){
-        dibujar_poligono(self.puntos,self.metodo);
+    self.draw = function(color,width){
+        context.lineWidth = width || 1;
+        return dibujar_poligono(self.puntos,self.metodo,self,color);
 
     }
 
     self.save= function(){
-        figuras.push(self);
+        guardar_figura(self);
         reset_function();
     }
 
 }
 
 
-function dibujar_poligono (puntos,metodo){
+function dibujar_poligono (puntos,metodo,poligono,color){
+
     var puntos_corte = [];
 
     if(area_recorte.xi){
-        var nuevos_puntos = recortar_linea(puntos[0][0],puntos[0][1],puntos[1][0],puntos[1][1]);
-        if(!(nuevos_puntos.xi==nuevos_puntos.xf && nuevos_puntos.yi == nuevos_puntos.yf)){
-            puntos_corte.push([nuevos_puntos.xi,nuevos_puntos.yi]);
-            puntos_corte.push([nuevos_puntos.xf,nuevos_puntos.yf]);
-        }
-        for(var i =1; i<puntos.length-1;i++){
-            var nuevos_puntos = recortar_linea(puntos[i][0],puntos[i][1],puntos[i+1][0],puntos[i+1][1]);
-            if(!(nuevos_puntos.xi==nuevos_puntos.xf && nuevos_puntos.yi == nuevos_puntos.yf)){
-                puntos_corte.push([nuevos_puntos.xf,nuevos_puntos.yf]);
-            }
+        //definir nuevos puntos
+        for(var i =0; i<puntos.length-1;i++){
+
+                var nuevos_puntos = recortar_linea_poligono(puntos[i][0],
+                                                            puntos[i][1],
+                                                            puntos[i+1][0],
+                                                            puntos[i+1][1]);
+                if(!(nuevos_puntos.xi==-1 && nuevos_puntos.yi == -1)){
+
+                    puntos_corte.push([nuevos_puntos.xi,nuevos_puntos.yi]);
+                    puntos_corte.push([nuevos_puntos.xf,nuevos_puntos.yf]);
+                }
 
         }
-        puntos = puntos_corte;
+
+        var puntos_nuevo_poligono=[];
+        for(var i = 0; i<puntos_corte.length;i++){
+            if(puntos_nuevo_poligono.indexOf(puntos_corte[i])==- 1)
+                puntos_nuevo_poligono.push(puntos_corte[i])
+        }
+        puntos_nuevo_poligono.push(puntos_corte[0]);
+
+        puntos = puntos_nuevo_poligono;
+
     }
 
     for(var i =0; i<puntos.length-1;i++){
 
-        // if(area_recorte.xi){
-        //     var nuevos_puntos =recortar_linea(puntos[i][0],puntos[i][1],puntos[i+1][0],puntos[i+1][1]);
-        //     puntos[i] =[nuevos_puntos.xi,nuevos_puntos.yi]
-        //     puntos[i+1] =[nuevos_puntos.xf,nuevos_puntos.yf]
-
-        // }
         var inicio = puntos[i];
         var fin = puntos[i+1];
-        console.log(i);
         linea = new Linea(inicio[0],inicio[1],fin[0],fin[1]);
         linea.metodo = metodo;
+        // var area_recorte_backup = area_recorte;
+        // area_recorte={};
+        context.fillStyle = color;
+        context.strokeStyle = color;
         linea.draw();
+        // area_recorte=area_recorte_backup;
     }
+    return puntos;
+
 
 }
 
 var metodos_linea = {
 
-    directo : function(xi,yi,xf,yf){
-
+    directo : function(xi,yi,xf,yf,color){
+        context.fillStyle = color;
+        context.strokeStyle = color;
         if(area_recorte.xi) {
             var nuevos_puntos =recortar_linea(xi,yi,xf,yf);
             xi = nuevos_puntos.xi;
@@ -133,10 +153,10 @@ var metodos_linea = {
         }
 
 
-        if(xi== xf) return this.linea_vertical(xi,yi,xf,yf);
-        if(yi==yf) return this.linea_horizontal(xi,yi,xf,yf);
+        if(xi== xf) return this.linea_vertical(xi,yi,xf,yf,color);
+        if(yi==yf) return this.linea_horizontal(xi,yi,xf,yf,color);
         var  m = (yf-yi)/(xf-xi);
-        if(Math.abs(m) == 1) return linea_diagonal(xi,yi,xf);
+        if(Math.abs(m) == 1) return this.linea_diagonal(xi,yi,xf);
         if( (Math.abs(m) < 1  && xi > xf )|| (Math.abs(m) > 1 && yf< yi)){
             var aux=xi;
             xi=xf;
@@ -165,9 +185,12 @@ var metodos_linea = {
         reset_function();
     },
 
-    add_simple: function (xi,yi,xf,yf){
+    add_simple: function (xi,yi,xf,yf,color){
 
         //verifica si hay area de recorte
+        //
+        context.fillStyle = color;
+        context.strokeStyle = color;
         if(area_recorte.xi) {
             var nuevos_puntos =recortar_linea(xi,yi,xf,yf);
             xi = nuevos_puntos.xi;
@@ -179,12 +202,12 @@ var metodos_linea = {
 
         console.log("xi: "+xi+" yi: "+yi+" xf: "+xf+" yf:"+yf);
 
-        if(xi== xf) return this.linea_vertical(xi,yi,xf,yf);
-        if(yi==yf) return this.linea_horizontal(xi,yi,xf,yf)
+        if(xi== xf) return this.linea_vertical(xi,yi,xf,yf,color);
+        if(yi==yf) return this.linea_horizontal(xi,yi,xf,yf,color)
 
         var  m = (yf-yi)/(xf-xi)
 
-        if(Math.abs(m) == 1) return this.linea_diagonal(xi,yi,xf)
+        if(Math.abs(m) == 1) return this.linea_diagonal(xi,yi,xf,color)
         else{
             //intercambio de valores
             if(Math.abs(m)<1 && xi > xf){
@@ -223,8 +246,10 @@ var metodos_linea = {
             }
         }
     },
-    add_entero: function (xi,yi,xf,yf){
+    add_entero: function (xi,yi,xf,yf,color){
 
+        context.fillStyle = color;
+        context.strokeStyle = color;
         if(area_recorte.xi) {
             var nuevos_puntos =recortar_linea(xi,yi,xf,yf);
             xi = nuevos_puntos.xi;
@@ -234,12 +259,12 @@ var metodos_linea = {
         }
 
 
-        if(xi==xf) return this.linea_vertical(xi,yi,xf,yf);
+        if(xi==xf) return this.linea_vertical(xi,yi,xf,yf,color);
 
-        if(yi==yf) return this.linea_horizontal(xi,yi,xf,yf);
+        if(yi==yf) return this.linea_horizontal(xi,yi,xf,yf,color);
 
         var m = (yf-yi)/(xf-xi);
-        if (Math.abs(m) == 1) return this.linea_diagonal(xi,yi,xf);
+        if (Math.abs(m) == 1) return this.linea_diagonal(xi,yi,xf,color);
         if( yi>yf ){
             var aux = xi;
             xi=xf;
@@ -327,7 +352,9 @@ var metodos_linea = {
         }
     },
 
-    linea_horizontal: function (xi,yi,xf,yf){
+    linea_horizontal: function (xi,yi,xf,yf,color){
+        context.fillStyle = color;
+        context.strokeStyle = color;
         if(xi>xf){
             var aux = xf;
             xf=xi;
@@ -338,7 +365,9 @@ var metodos_linea = {
         }
     },
 
-    linea_vertical:function (xi,yi,xf,yf){
+    linea_vertical:function (xi,yi,xf,yf,color){
+        context.fillStyle = color;
+        context.strokeStyle = color;
         if(yi>yf){
             var aux = yf;
             yf=yi;
@@ -349,7 +378,9 @@ var metodos_linea = {
         }
     },
 
-    linea_diagonal: function (xi,yi,xf,yf){
+    linea_diagonal: function (xi,yi,xf,yf,color){
+        context.fillStyle = color;
+        context.strokeStyle = color;
         for(xi;xi<=xf;xi++){
             dibujar(xi,yi);
             yi++;
